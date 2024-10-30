@@ -1,0 +1,64 @@
+import json
+
+def convert_to_decimal(base, value):
+    """Convert a number from a given base to decimal."""
+    return int(value, base)
+
+def find_constant_term(points, k):
+    """Apply Lagrange Interpolation to find the constant term (f(0))."""
+    constant_term = 0
+    for i, (x_i, y_i) in enumerate(points[:k]):
+        term = y_i
+        for j, (x_j, _) in enumerate(points[:k]):
+            if i != j:
+                term *= -x_j / (x_i - x_j)
+        constant_term += term
+    return constant_term
+
+# Input JSON
+input_json = '''
+   {
+    "keys": {
+        "n": 4,
+        "k": 3
+    },
+    "1": {
+        "base": "10",
+        "value": "4"
+    },
+    "2": {
+        "base": "2",
+        "value": "111"
+    },
+    "3": {
+        "base": "10",
+        "value": "12"
+    },
+    "6": {
+        "base": "4",
+        "value": "213"
+    }
+}
+'''
+
+# Load the JSON data
+data = json.loads(input_json)
+
+# Extract keys
+k = data["keys"]["k"]
+
+# Parse points and convert values to decimal
+points = []
+for key, info in data.items():
+    if key.isdigit():
+        x = int(key)
+        base = int(info["base"])
+        y = convert_to_decimal(base, info["value"])
+        points.append((x, y))
+
+# Sort points by x for consistency (optional, but may help in some interpolation methods)
+points.sort()
+
+# Calculate the constant term
+constant = find_constant_term(points, k)
+print("The constant term (c) is:", constant)
