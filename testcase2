@@ -1,0 +1,89 @@
+import json
+
+def convert_to_decimal(base, value):
+    """Convert a number from a given base to decimal."""
+    return int(value, base)
+
+def find_constant_term(points, k):
+    """Apply Lagrange Interpolation to find the constant term (f(0))."""
+    constant_term = 0
+    for i, (x_i, y_i) in enumerate(points[:k]):
+        term = y_i
+        for j, (x_j, _) in enumerate(points[:k]):
+            if i != j:
+                term *= -x_j / (x_i - x_j)
+        constant_term += term
+    return constant_term
+
+# Input JSON
+input_json = '''
+   {
+    "keys": {
+        "n": 10,
+        "k": 7
+    },
+    "1": {
+        "base": "6",
+        "value": "13444211440455345511"
+    },
+    "2": {
+        "base": "15",
+        "value": "aed7015a346d63"
+    },
+    "3": {
+        "base": "15",
+        "value": "6aeeb69631c227c"
+    },
+    "4": {
+        "base": "16",
+        "value": "e1b5e05623d881f"
+    },
+    "5": {
+        "base": "8",
+        "value": "316034514573652620673"
+    },
+    "6": {
+        "base": "3",
+        "value": "2122212201122002221120200210011020220200"
+    },
+    "7": {
+        "base": "3",
+        "value": "20120221122211000100210021102001201112121"
+    },
+    "8": {
+        "base": "6",
+        "value": "20220554335330240002224253"
+    },
+    "9": {
+        "base": "12",
+        "value": "45153788322a1255483"
+    },
+    "10": {
+        "base": "7",
+        "value": "1101613130313526312514143"
+    }
+}
+
+'''
+
+# Load the JSON data
+data = json.loads(input_json)
+
+# Extract keys
+k = data["keys"]["k"]
+
+# Parse points and convert values to decimal
+points = []
+for key, info in data.items():
+    if key.isdigit():
+        x = int(key)
+        base = int(info["base"])
+        y = convert_to_decimal(base, info["value"])
+        points.append((x, y))
+
+# Sort points by x for consistency (optional, but may help in some interpolation methods)
+points.sort()
+
+# Calculate the constant term
+constant = find_constant_term(points, k)
+print("The constant term (c) is:", constant)
